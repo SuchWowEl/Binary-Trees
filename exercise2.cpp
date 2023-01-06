@@ -309,14 +309,14 @@ template <class T> int BSTree<T>::includes(T &val) const{
 
 // implementation of method that inserts a value into the tree
 template <class T> void BSTree<T>::insert(T &val){
-    if(root == NULL) root = makeBinNode<T>(val);
+    if(root == 0) root = makeBinNode<T>(val);
     else{
         BinNode<T> *ptr = root, *before;
         while(ptr != 0){
             before = ptr;
-            val <= ptr->element ? ptr = ptr->left : ptr = ptr->right;
+            val <= before->element ? ptr = ptr->left : ptr = ptr->right;
         }
-        ptr == before->left ? before->left = makeBinNode<T>(val) : before->right = makeBinNode<T>(val);
+        val <= before->element ? before->left = makeBinNode<T>(val) : before->right = makeBinNode<T>(val);
     }
     nodecount++;
 }
