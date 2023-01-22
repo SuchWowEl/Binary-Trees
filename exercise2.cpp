@@ -298,71 +298,108 @@ All memory allocations should be checked with assertions and all
 discarded memory must be properly deallocated.*/
 // implementation of method that tests if value is in the collection
 template <class T> int BSTree<T>::includes(T &val) const{
+    //declare a BinNode<T> pointer named ptr and assign it the value of root
     BinNode<T> *ptr = root;
+    //as long as ptr is not NULL, then execute the following
     while(ptr != NULL){
+        // if the node pointed by ptr has an element that is equal to val, then return 1
         if(ptr->element == val) return 1;
+        //if ptr's element is greater than or equal to val, then assign ptr's left child to be its value,
+        //otherwise use its right child
         ptr->element >= val ? ptr = ptr->left : ptr = ptr->right;
     }
+    //if it reaches here, then that means a node containing val is not in the tree, therefore
+    //returning 0
     return 0;
 }
 
 
 // implementation of method that inserts a value into the tree
 template <class T> void BSTree<T>::insert(T &val){
+    //checks first if root has no node, if true then call the function makeBinNode
     if(root == 0) root = makeBinNode<T>(val);
+    //if false then proceed
     else{
+        //declare two BinNode<T> pointers namely ptr and before, and assign the value of root to ptr
         BinNode<T> *ptr = root, *before;
+        //as long as ptr is not null, then repeat the following
         while(ptr != 0){
+            //assign the value of ptr to before
             before = ptr;
+            //checks if val is less than or equal to the element of before's node, if true then assign ptr's left child to be its value,
+            //otherwise use its right child
             val <= before->element ? ptr = ptr->left : ptr = ptr->right;
         }
+        //checks if val is less than or equal to the element of *before's node, if true then call function makeBinNode to assign node to before's left child,
+        //otherwise to before's right child
         val <= before->element ? before->left = makeBinNode<T>(val) : before->right = makeBinNode<T>(val);
     }
+    //increment nodecount
     nodecount++;
 }
 
 
 // implementation of method that removes a value from the tree
 template <class T> T BSTree<T>::remove(T &val){
+    //declare two BinNode<T> pointers namely ptr and before, and assign the value of root to ptr
     BinNode<T> *ptr = root, *before;
+    //as long as ptr is not null and ptr's element is not equal to val, then repeat the following
     while(ptr != 0 && ptr->element != val){
+        //assign the value of ptr to before
         before = ptr;
+        //checks if val is less than or equal to the element of ptr's node, if true then assign ptr's left child to be its value,
+        //otherwise use its right child
         val <= ptr->element ? ptr = ptr->left : ptr = ptr->right;
     }
-    if(ptr == 0) return 0;
+    // if ptr is null or 0, then that means a node containing val is not in the tree, therefore returning only val and no deletion
+    if(ptr == 0) return val;
+    // else if ptr is pointing to the same node as root, then we call removeTop with ptr
+    // being its argument to return a node to assign to root
     else if(ptr == root) root = removeTop(ptr);
+    // else if ptr is pointing to the same node as before's left, then we call removeTop with ptr
+    // being its argument to return a node to assign to before's left
     else if (ptr == before->left) before->left = removeTop(ptr);
+    // else ptr is pointing to the same node as before's right, then we call removeTop with ptr
+    // being its argument to return a node to assign to before's right
     else before->right = removeTop(ptr);
 
-    delete ptr;
-    nodecount--;
-    return val;
+    delete ptr;// deallocate the memory occupied by the node pointed by ptr
+    nodecount--;// decrement nodecount
+    return val;// return val
 }
 // implementation of the inorder traversal function
 template <class T> void inorder(BinNode<T>* root){
+    //if root has no node, then we do nothing and not execute the succeeding lines
     if(root == NULL) return;
-    inorder(root->left);
-    visit(root);
-    inorder(root->right);
+    inorder(root->left);// call inorder with root's left being the argument
+    visit(root);// call visit with root being its argument to display the root's element
+    inorder(root->right);// call inorder with root's right being the argument
 }
 
 // implementation of the postorder traversal function
 template <class T> void postorder(BinNode<T>* root){
+    //if root has no node, then we do nothing and not execute the succeeding lines
     if(root == NULL) return;
-    postorder(root->left);
-    postorder(root->right);
-    visit(root);
+    postorder(root->left);// call postorder with root's left being the argument
+    postorder(root->right);// call postorder with root's right being the argument
+    visit(root);// call visit with root being its argument to display the root's element
 }
 
 // implementation of the levelorder traversal function
 template <class T> void levelorder(BinNode<T> *root){
+    //declare a queue variable that stores BinNode<T> pointers and call it q
     queue<BinNode<T>*> q;
-    if(root != 0) q.push(root);
+    if(root != 0) q.push(root);// if root has a node, then we push it to q
     
+    //as long as q is not empty, then execute the following
     while(!q.empty()){
+        //if the first element of the q's left is not NULL, then we push it to the queue
         if(q.front()->left != 0) q.push(q.front()->left);
+        //the same with the previous if but for the first element of q's right
         if(q.front()->right != 0) q.push(q.front()->right);
+        //display the first element of q's element
         visit(q.front());
+        //remove the first element from q
         q.pop();
     }
 }
